@@ -1,9 +1,20 @@
-<div>
-    <h1>Cars list</h1>
-    <h2>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut inventore excepturi delectus est! Vero eaque quos dignissimos reiciendis. Iste non voluptates nulla adipisci corporis quos iure facilis quibusdam. Facere, obcaecati.</h2>
-    <br>
-    <label for="">listado</label>
-    <div>
-        <label for="">listao</label>
-    </div>
-</div>
+<table *ngIf="cars.length; else noCars">
+    <tr>
+        <th>Plate</th>
+        <th>Brand</th>
+        <th>Model</th>
+        <th>Color</th>
+    </tr>
+    <ng-template ngFor let-car [ngForOf]="cars" let-i="index">
+        <tr>
+            <td>{{car.plate}}</td>
+            <td>{{car.brand}}</td>
+            <td>{{car.model}}</td>
+            <td>{{car.color}}</td>
+        </tr>
+    </ng-template>
+</table>
+
+<ng-template #noCars>
+    <p>No cars in the parking lot</p>
+</ng-template>
