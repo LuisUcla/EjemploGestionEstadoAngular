@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { Car } from './models/car';
 import { StoreService } from './store/store.service';
 
 @Component({
@@ -11,20 +13,29 @@ import { StoreService } from './store/store.service';
 export class AppComponent {
   title = 'parking-lot-app';
   plate = ''
-  vm$ = this.store.vm$
+  vm:any;
+  constructor(private store: StoreService) {
+    this.store.vm$.subscribe((data: any) => {
+      this.vm = data
 
-  constructor(private router: Router, private store: StoreService) {}
+      if (this.vm.car) {
+        this.vm.cars = this.vm.cars.filter((car: Car) => car.plate != this.vm.car);
+        this.vm.car = '';
+      }
+      console.log(this.vm);
+    })
+  }
 
-  onSubmit($event: Event) {
-    $event.preventDefault()
+  onSubmit() {
     this.store.addCarToParkingLot(this.plate)
   }
 
-  addPlate($event: Event) {
-    const target = $event.target as HTMLButtonElement
+  addPlate(event: Event) {
+    const target = event.target as HTMLButtonElement;
 
     if (target.nodeName === 'BUTTON') {
         this.plate = target.innerHTML
     }
   }
+  
 }

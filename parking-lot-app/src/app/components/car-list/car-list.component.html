@@ -4,6 +4,7 @@
         <th>Brand</th>
         <th>Model</th>
         <th>Color</th>
+        <th>Options</th>
     </tr>
     <ng-template ngFor let-car [ngForOf]="cars" let-i="index">
         <tr>
@@ -11,6 +12,13 @@
             <td>{{car.brand}}</td>
             <td>{{car.model}}</td>
             <td>{{car.color}}</td>
+            <td>
+                <button (click)="delete(car.plate)">
+                    <ng-container>
+                        Delete
+                    </ng-container>
+                </button>
+            </td>
         </tr>
     </ng-template>
 </table>

@@ -58,6 +58,16 @@ export class ParkingLotService {
     }
   }
 
+  delete(plate: string): Observable<any> {
+    try {
+      this.cars = this.cars.filter((car: Car) => car.plate != plate);
+
+      return of({plate: plate}).pipe(delay(FAKE_DELAY))
+    } catch (error) {
+      return throwError(error)
+    }
+  }
+
   private getCarByPlate(plate: string): Car {
     const car = data.find((item: Car) => item.plate === plate)
 

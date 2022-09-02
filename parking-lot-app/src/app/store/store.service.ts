@@ -8,6 +8,7 @@ import { ParkingLotService } from '../services/parking-lot.service'
 // The state model
 interface ParkingState {
     cars: Car[] // render the table with cars
+    car: string // car deleted
     error: string // show the error when try to add cars
     loading: boolean // used to enable/disable elements in the UI while fetching data
 }
@@ -19,6 +20,7 @@ export class StoreService extends ComponentStore<ParkingState> {
             cars: [],
             error: '',
             loading: false,
+            car: ''
         })
     }
 
@@ -44,11 +46,20 @@ export class StoreService extends ComponentStore<ParkingState> {
         return {
             ...state,
             error: '',
-            cars: [...state.cars, car],
+            cars: [...state.cars, car]
         }
     })
 
-    // EFFECTS
+    readonly deleteCars = this.updater((state: ParkingState, cars: any) => {
+        return {
+            ...state,
+            error: '',
+            cars: [...state.cars],
+            car: cars.plate
+        }
+    })
+
+    // EFFECTS ADD
     readonly addCarToParkingLot = this.effect((plate$: Observable<string>) => {
         return plate$.pipe(
             concatMap((plate: string) => {
@@ -59,7 +70,26 @@ export class StoreService extends ComponentStore<ParkingState> {
                         error: (e) => this.updateError(e),
                     }),
                     finalize(() => {
-                        this.setLoading(false)
+                        this.setLoading(false);
+                    }),
+                    catchError(() => EMPTY)
+                )
+            })
+        )
+    })
+
+    // EFFECTS DELETE
+    readonly deleteCarToParkingLot = this.effect((plate$: Observable<string>) => {
+        return plate$.pipe(
+            concatMap((plate: string) => {
+                this.setLoading(true)
+                return this.parkingLotService.delete(plate).pipe(
+                    tap({
+                        next: (car) => this.deleteCars(car),
+                        error: (e) => this.updateError(e),
+                    }),
+                    finalize(() => {
+                        this.setLoading(false);
                     }),
                     catchError(() => EMPTY)
                 )
